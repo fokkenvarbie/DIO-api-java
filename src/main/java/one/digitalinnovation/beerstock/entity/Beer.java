@@ -1,6 +1,7 @@
 package one.digitalinnovation.beerstock.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import one.digitalinnovation.beerstock.enums.BeerType;
@@ -17,6 +18,7 @@ import jakarta.persistence.Id;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Beer {
 
     @Id
@@ -38,6 +40,4 @@ public class Beer {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BeerType type;
-
-
 }
