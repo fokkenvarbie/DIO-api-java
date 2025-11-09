@@ -1,47 +1,69 @@
 package one.digitalinnovation.beerstock.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import one.digitalinnovation.beerstock.dto.BeerDTO;
-import one.digitalinnovation.beerstock.dto.QuantityDTO;
 import one.digitalinnovation.beerstock.exception.BeerAlreadyRegisteredException;
 import one.digitalinnovation.beerstock.exception.BeerNotFoundException;
-import one.digitalinnovation.beerstock.exception.BeerStockExceededException;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
 import java.util.List;
 
-@Api("Manages beer stock")
+@Tag(name = "Beer Management", description = "Operations for managing beer stock")
 public interface BeerControllerDocs {
 
-    @ApiOperation(value = "Beer creation operation")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Success beer creation"),
-            @ApiResponse(code = 400, message = "Missing required fields or wrong field range value.")
-    })
-    BeerDTO createBeer(BeerDTO beerDTO) throws BeerAlreadyRegisteredException;
+    @Operation(
+            summary = "Create a new beer",
+            description = "Registers a new beer in the system",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Beer successfully created",
+                            content = @Content(schema = @Schema(implementation = BeerDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Missing or invalid fields")
+            }
+    )
+    BeerDTO createBeer(
+            @Parameter(description = "Beer data to be created", required = true)
+            BeerDTO beerDTO
+    ) throws BeerAlreadyRegisteredException;
 
-    @ApiOperation(value = "Returns beer found by a given name")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success beer found in the system"),
-            @ApiResponse(code = 404, message = "Beer with given name not found.")
-    })
-    BeerDTO findByName(@PathVariable String name) throws BeerNotFoundException;
+    @Operation(
+            summary = "Find beer by name",
+            description = "Returns a beer found by its name",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Beer found",
+                            content = @Content(schema = @Schema(implementation = BeerDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "Beer not found")
+            }
+    )
+    BeerDTO findByName(
+            @Parameter(description = "Name of the beer to search", required = true)
+            @PathVariable String name
+    ) throws BeerNotFoundException;
 
-    @ApiOperation(value = "Returns a list of all beers registered in the system")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "List of all beers registered in the system"),
-    })
+    @Operation(
+            summary = "List all beers",
+            description = "Returns a list of all registered beers",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of all beers",
+                            content = @Content(schema = @Schema(implementation = BeerDTO.class)))
+            }
+    )
     List<BeerDTO> listBeers();
 
-    @ApiOperation(value = "Delete a beer found by a given valid Id")
-    @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Success beer deleted in the system"),
-            @ApiResponse(code = 404, message = "Beer with given id not found.")
-    })
-    void deleteById(@PathVariable Long id) throws BeerNotFoundException;
+    @Operation(
+            summary = "Delete beer by ID",
+            description = "Deletes a beer from the system by its ID",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Beer successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "Beer not found")
+            }
+    )
+    void deleteById(
+            @Parameter(description = "ID of the beer to delete", required = true)
+            @PathVariable Long id
+    ) throws BeerNotFoundException;
 }
